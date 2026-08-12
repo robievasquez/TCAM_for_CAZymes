@@ -1,0 +1,20 @@
+[project]
+name = "tcam-for-cazymes"
+version = "0.1.0"
+description = "TCAM analysis environment for CAZyme mouse metagenome workflows"
+channels = ["conda-forge", "bioconda", "anaconda"]
+platforms = ["osx-arm64", "osx-64", "linux-64"]
+
+[dependencies]
+python = "3.10.*"
+python-dateutil = "==2.8.2"
+six = "==1.16.0"
+mprod-package = "==0.0.5a1"
+numpy = ">=1.23,<2"
+matplotlib = ">=3.9,<4"
+seaborn = ">=0.13,<0.14"
+scikit-learn = ">=1.4,<2"
+scipy = ">=1.13,<2"
+
+[tasks]
+tcam = "python tcam.py"
