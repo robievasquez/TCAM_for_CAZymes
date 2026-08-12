@@ -1,0 +1,7 @@
+,g1,g2,p
+0,Female WT,Female TDP43,0.1111111111111111
+1,Female WT,Male WT,0.5555555555555556
+2,Female WT,Male TDP43,0.6
+3,Female TDP43,Male WT,0.1
+4,Female TDP43,Male TDP43,0.0
+5,Male WT,Male TDP43,0.0
