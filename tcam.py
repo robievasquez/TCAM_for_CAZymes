@@ -113,7 +113,7 @@ def run_permanova(meta, data, nperms = 1000, n_processes = 1):
     return ((fs_perms > fs_obs).sum() ) / (nperms ) 
 
 # Data import
-file_path = "new_tcam/imputed_microbiome_data_2.csv"
+file_path = "imputed_microbiome_data_2.csv"
 os.makedirs("pythonoutput_2", exist_ok=True)
 data_raw = pd.read_csv(file_path, index_col=[0, 1], sep=",")
 
@@ -172,9 +172,9 @@ f2 = df_tca.columns[1]
 fig,ax  = plt.subplots(1,1, figsize=[4,4], dpi = 500)
 sns.scatterplot(data = df_plot, x = f1, y = f2 , hue='GenotypePerSex', ax = ax, edgecolor = 'k', linewidths=.1)
 ax.legend(loc='center left', fontsize = 6, fancybox = False, framealpha = 1, edgecolor = 'k', bbox_to_anchor=(1, 0.5))
-plt.savefig('new_tcam/scatterplot.png', format='png', dpi=300, bbox_inches='tight')
+plt.savefig('pythonoutput_2/scatterplot.png', format='png', dpi=300, bbox_inches='tight')
 
-df_plot.to_csv('new_tcam/pythonoutput_2/df_plot.csv', index=False)
+df_plot.to_csv('pythonoutput_2/df_plot.csv', index=False)
 
 # Permanova
 n_factors = (np.cumsum(tcam.explained_variance_ratio_) < .2).sum() + 1  # PC for 20% variance
@@ -220,13 +220,13 @@ for g1, g2 in combinations(unique_values, 2):
         print("Error running PERMANOVA for {} vs {}: {}".format(g1, g2, e))
 
 print(perm_res)
-perm_res.to_csv("new_tcam/pythonoutput_2/perm_res.csv")
+perm_res.to_csv("pythonoutput_2/perm_res.csv")
 
 # Loadings
 loadings = tcam.mode2_loadings
 df_loadings = pd.DataFrame(loadings, index =  df3.iloc[:,0:].columns)
 df_loadings.columns = [f'F{i}:{val}%' for i,val in enumerate(rounded_expvar, start = 1)]
-df_loadings.to_csv('new_tcam/pythonoutput_2/df_loadings.csv', index=True)
+df_loadings.to_csv('pythonoutput_2/df_loadings.csv', index=True)
 
 # PC1
 loadings_f1 = df_loadings.iloc[:,0].sort_values().copy()
@@ -258,7 +258,7 @@ for i, row in loadings_f1.iterrows():
 ax.yaxis.set_tick_params(size = 3, length = 400,direction = 'inout')
 sns.despine(top=True, bottom=True, right=True, trim=True)
 ax.spines['left'].set_position('zero')
-plt.savefig('new_tcam/pythonoutput_2/barplot_pc1.png', format='png', dpi=300, bbox_inches='tight')
+plt.savefig('pythonoutput_2/barplot_pc1.png', format='png', dpi=300, bbox_inches='tight')
 
 # PC 2
 loadings_f2 = df_loadings.iloc[:,1].sort_values().copy()
@@ -290,4 +290,4 @@ for i, row in loadings_f2.iterrows():
 ax.yaxis.set_tick_params(size = 3, length = 400, direction = 'inout')
 sns.despine(top=True, bottom=True, right=True, trim=True)
 ax.spines['left'].set_position('zero')
-plt.savefig('new_tcam/pythonoutput_2/barplot_pc2.png', format='png', dpi=300, bbox_inches='tight')
+plt.savefig('pythonoutput_2/barplot_pc2.png', format='png', dpi=300, bbox_inches='tight')

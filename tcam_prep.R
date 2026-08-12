@@ -55,8 +55,8 @@ impute_missing <- function(x) {
 }
 
 # Open data
-cayman_t <- rio::import("cayman/tables/families_cpm_table.tsv")
-meta <- readRDS("meta_microbiome_run1.RDS")
+cayman_t <- rio::import("../../cayman/tables/families_cpm_table.tsv")
+meta <- readRDS("../../meta_microbiome_run1.RDS")
 
 dim(cayman_t) #307 features, 140 samples
 
@@ -97,6 +97,9 @@ microbiome_prevalence <- colMeans(df[, microbiome_cols] > 0, na.rm = TRUE)
 microbiome_cols <- microbiome_cols[microbiome_prevalence >= prevalence_threshold]
 message(length(microbiome_cols), " CAZyme families retained after prevalence filtering (>=10% of samples)")
 
+df <- df[, c(meta_cols, microbiome_cols)]
+dim(df) #251 features + 8 meta cols
+
 # Expand to a complete mouse x timepoint grid so missing timepoints become explicit rows
 mouse_meta <- df %>% distinct(MouseID, Genotype, Sex, GenotypePerSex)
 timepoints <- df %>% distinct(Age_ints, Age_weeks)
@@ -125,9 +128,11 @@ df_imputed_wide <- dftot_long_imputed %>%
   select(ID, MouseID, Age_weeks, Age_ints, Genotype, Sex, GenotypePerSex, all_of(microbiome_cols)) %>%
   mutate(ID = case_when(is.na(ID) ~ str_c("I", row_number()), 
             .default = ID))
+dim(df_imputed_wide) #251 features + 7 meta cols
 
 # Filter out terminal timepoints with too many missings (see script 2_1)
-df_imputed_wide <- df_imputed_wide %>% filter(!Age_ints %in% c(18, 26))
+# Inspect the week 26 - too many NAs!
+df_imputed_wide <- df_imputed_wide %>% filter(!Age_ints %in% c(26))
 
 ## This filter is applied last so that the timepoints could still be used to impute neigbouring timepoints ##
 any(is.na(df_imputed_wide)) # FALSE - There's no missing values left
@@ -150,8 +155,8 @@ df_imputed_wide %>% # AFTER IMPUTATION
        head(n = 8)
 
 # Save the imputed df
-write.csv(df_imputed_wide, "new_tcam/imputed_microbiome_data_2.csv", row.names = FALSE)
-saveRDS(df_imputed_wide, "new_tcam/imputed_microbiome_data_2.RDS")
+write.csv(df_imputed_wide, "imputed_microbiome_data_2.csv", row.names = FALSE)
+saveRDS(df_imputed_wide, "imputed_microbiome_data_2.RDS")
 
 # Lineplot before and after imp as example
 microbiome_var <- microbiome_cols[1]  # Select the first microbiome variable for plotting
@@ -187,4 +192,4 @@ data_after_imputation <- df_imputed_wide %>% filter(MouseID == "79") %>%
 ggpubr::ggarrange(pl1, pl2, labels = c("A", "B"), ncol = 2, nrow = 1)
 
 # Save the plot
-ggsave("new_tcam/sample_line_plot_2.pdf", width = 10, height = 6)
+ggsave("sample_line_plot_2.pdf", width = 10, height = 6)
